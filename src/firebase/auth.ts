@@ -1,6 +1,8 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "./firebase"; // importuokite firebase konfigūraciją
+import { auth } from "./index"; // импортируем из index.ts
+
 type SuccessCallback = (path: string) => void;
+
 // Prisijungimo funkcija
 export const login = async (email: string, password: string, onSuccess: SuccessCallback) => {
   try {
@@ -31,4 +33,4 @@ export const logout = async (onSuccess: SuccessCallback) => {
   } catch (error) {
     console.error("Error logging out: ", error);
   }
-};
+}; 

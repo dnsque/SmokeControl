@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth } from '../firebase/index';
 import { onAuthStateChanged } from 'firebase/auth';
 import TopUsersRanking from '../components/TopUsersRanking';
 

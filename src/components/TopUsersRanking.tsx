@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db } from '../firebase/index';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 
@@ -30,6 +30,10 @@ const TopUsersRanking: React.FC = () => {
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
+        console.log("Начинаем запрос к Firestore...");
+        console.log("Используем коллекцию:", "userData");
+        console.log("Firestore instance:", db);
+        
         // Create a query to get top 15 users sorted by savings
         const usersQuery = query(
           collection(db, "userData"),
@@ -37,10 +41,14 @@ const TopUsersRanking: React.FC = () => {
           limit(15)
         );
 
+        console.log("Запрос создан, получаем документы...");
         const querySnapshot = await getDocs(usersQuery);
+        console.log("Документы получены. Количество документов:", querySnapshot.size);
+        
         const userData: UserData[] = [];
 
         querySnapshot.forEach((doc) => {
+          console.log("Документ:", doc.id, "=>", doc.data());
           const data = doc.data() as Omit<UserData, 'id'>;
           userData.push({
             id: doc.id,
@@ -48,10 +56,15 @@ const TopUsersRanking: React.FC = () => {
           });
         });
 
+        console.log("Данные обработаны, всего записей:", userData.length);
         setUsersData(userData);
       } catch (err) {
         console.error("Error fetching user data:", err);
-        setError("Nepavyko gauti vartotojų duomenų");
+        if (err instanceof Error) {
+          setError(`Nepavyko gauti vartotojų duomenų: ${err.message}`);
+        } else {
+          setError("Nepavyko gauti vartotojų duomenų: Nežinoma klaida");
+        }
       } finally {
         setLoading(false);
       }

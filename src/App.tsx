@@ -1,58 +1,15 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import Articles from './pages/Articles'
 import RegisterPage from './pages/RegisterPage'
 import AccountPage from './pages/AccountPage'
-import Header from './pages/Header'
-import Footer from './pages/Footer'
+import Header from './components/Header'
+import Footer from './components/Footer'
 import ArticleDetail from './pages/ArticleDetail'
 import UserRatingsPage from './pages/UserRatingsPage'
-// Component to handle title changes based on routes
-function TitleUpdater() {
-  const location = useLocation();
-
-  useEffect(() => {
-    // Set default title
-    let title = 'SmokeControl';
-    
-    // Update title based on current path
-    switch(location.pathname) {
-      case '/':
-        title = 'SmokeControl - Pagrindinis';
-        break;
-      case '/login':
-        title = 'SmokeControl - Prisijungimas';
-        break;
-      case '/articles':
-        title = 'SmokeControl - Straipsniai';
-        break;
-      case '/register':
-        title = 'SmokeControl - Registracija';
-        break;
-      case '/account':
-        title = 'SmokeControl - Paskyra';
-        break;
-      case '/ratings':
-        title = 'SmokeControl - Vartotojų reitingas';
-        break;
-      default:
-        // Check if it's an article page
-        if (location.pathname.startsWith('/articles/')) {
-          title = 'SmokeControl - Straipsnis';
-        } else {
-          title = 'SmokeControl';
-        }
-    }
-    
-    // Update document title
-    document.title = title;
-  }, [location]);
-
-  return null;
-}
+import TitleUpdater from './components/TitleUpdater'
 
 function App() {
   return (

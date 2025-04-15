@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import DisplayUserData from '../components/DisplayUserData';
 import UserDataForm from '../forms/UserDataForm';
-import { auth } from '../firebase';
+import { auth } from '../firebase/index';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const AccountPage: React.FC = () => {

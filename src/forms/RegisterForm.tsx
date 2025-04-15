@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { register } from '../auth'; // импортируем функцию
+import { register } from '../firebase/auth'; // импортируем функцию
 
 const RegisterForm = () => {
   const [email, setEmail] = useState<string>('');

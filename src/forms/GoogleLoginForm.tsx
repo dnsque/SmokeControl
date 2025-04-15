@@ -1,4 +1,4 @@
-import { auth, provider, signInWithPopup } from '../firebase'; // Import Firebase and Google Auth
+import { auth, provider, signInWithPopup } from '../firebase/index'; // Import Firebase and Google Auth
 
 const GoogleLoginForm = () => {
   const handleGoogleLogin = async () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { saveOrUpdateData } from "../firebaseData";
-import { auth, db } from "../firebase";
+import { saveOrUpdateData } from "../firebase/firebaseData";
+import { auth, db } from "../firebase/index";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 

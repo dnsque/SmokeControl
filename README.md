@@ -1,50 +1,49 @@
-# React + TypeScript + Vite
+# SmokeControl
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Приложение для контроля и мотивации бросить курить.
 
-Currently, two official plugins are available:
+## Структура проекта
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+src/
+  ├── assets/         # Статические ресурсы (изображения, шрифты)
+  ├── components/     # Повторно используемые компоненты UI
+  │    ├── Header.tsx        # Компонент заголовка
+  │    ├── Footer.tsx        # Компонент подвала
+  │    ├── TitleUpdater.tsx  # Компонент для обновления заголовка страницы
+  │    └── ...
+  ├── pages/          # Компоненты страниц (соответствуют маршрутам)
+  │    ├── HomePage.tsx      # Главная страница
+  │    ├── LoginPage.tsx     # Страница входа
+  │    ├── AccountPage.tsx   # Страница аккаунта
+  │    └── ...
+  ├── firebase/       # Конфигурация и сервисы Firebase
+  │    ├── index.ts          # Инициализация Firebase
+  │    ├── auth.ts           # Сервисы аутентификации
+  │    └── firebaseData.ts   # Сервисы для работы с данными Firestore
+  ├── services/       # Другие сервисы API
+  ├── hooks/          # Пользовательские хуки React
+  ├── forms/          # Компоненты форм
+  ├── data/           # Статические данные или модели
+  ├── App.tsx         # Корневой компонент приложения
+  └── main.tsx        # Точка входа
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Настройка окружения
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. Создайте файл `.env` на основе `.env.example`
+2. Заполните необходимые переменные окружения для Firebase с префиксом `VITE_`
+   (в Vite все переменные окружения должны начинаться с `VITE_`)
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## Запуск проекта
+
+```bash
+# Установка зависимостей
+npm install
+
+# Запуск режима разработки
+npm run dev
+
+# Сборка для продакшн
+npm run build
 ```

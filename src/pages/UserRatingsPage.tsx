@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { db } from '../firebase';
+import { db, auth } from '../firebase/index';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { Link } from 'react-router-dom';
 
 interface UserData {
   id: string;
@@ -17,8 +19,15 @@ const UserRatingsPage: React.FC = () => {
   const [usersData, setUsersData] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
+    // Проверка авторизации пользователя
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+
+    // Получение данных рейтинга
     const fetchUsersData = async () => {
       try {
         // Create a query to get users sorted by savings (highest first)
@@ -49,6 +58,9 @@ const UserRatingsPage: React.FC = () => {
     };
 
     fetchUsersData();
+
+    // Отписка от слушателя при размонтировании
+    return () => unsubscribeAuth();
   }, []);
 
   // Calculate days since quit date
@@ -99,42 +111,56 @@ const UserRatingsPage: React.FC = () => {
       {usersData.length === 0 ? (
         <p className="text-center text-lg">Nerasta vartotojų duomenų</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th className="text-center">Vieta</th>
-                <th>Vartotojas</th>
-                <th className="text-center">Dienų be rūkymo</th>
-                <th className="text-center">Nerūkyta cigarečių</th>
-                <th className="text-right">Sutaupyta</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usersData.map((user, index) => (
-                <tr key={user.id} className={index < 3 ? "bg-base-200" : ""}>
-                  <td className="text-center font-bold">
-                    {index === 0 && "🥇"}
-                    {index === 1 && "🥈"}
-                    {index === 2 && "🥉"}
-                    {index > 2 && (index + 1)}
-                  </td>
-                  <td>
-                    {user.displayName || "Anonimas"}
-                  </td>
-                  <td className="text-center">
-                    {calculateDaysSinceQuit(user.quitTime)}
-                  </td>
-                  <td className="text-center">
-                    {calculateDaysSinceQuit(user.quitTime) * user.frequency}
-                  </td>
-                  <td className="text-right font-semibold">
-                    {user.savings.toFixed(2)}€
-                  </td>
+        <div className="relative">
+          {/* Таблица всегда загружается и отображается */}
+          <div className="overflow-x-auto">
+            <table className={`table w-full ${!isLoggedIn ? 'blur-sm' : ''}`}>
+              <thead>
+                <tr>
+                  <th className="text-center">Vieta</th>
+                  <th>Vartotojas</th>
+                  <th className="text-center">Dienų be rūkymo</th>
+                  <th className="text-center">Nerūkyta cigarečių</th>
+                  <th className="text-right">Sutaupyta</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {usersData.map((user, index) => (
+                  <tr key={user.id} className={index < 3 ? "bg-base-200" : ""}>
+                    <td className="text-center font-bold">
+                      {index === 0 && "🥇"}
+                      {index === 1 && "🥈"}
+                      {index === 2 && "🥉"}
+                      {index > 2 && (index + 1)}
+                    </td>
+                    <td>
+                      {user.displayName || "Anonimas"}
+                    </td>
+                    <td className="text-center">
+                      {calculateDaysSinceQuit(user.quitTime)}
+                    </td>
+                    <td className="text-center">
+                      {calculateDaysSinceQuit(user.quitTime) * user.frequency}
+                    </td>
+                    <td className="text-right font-semibold">
+                      {user.savings.toFixed(2)}€
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Сообщение о необходимости авторизации поверх размытых данных */}
+          {!isLoggedIn && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+              <div className="bg-base-300 p-6 rounded-lg shadow-lg max-w-md text-center">
+                <h3 className="text-xl font-bold mb-4">Norėdami peržiūrėti reitingą, prašome prisijungti</h3>
+                <p className="mb-6">Prisijungę galėsite matyti vartotojų reitingą be apribojimų.</p>
+                <Link to="/login" className="btn btn-primary">Prisijungti</Link>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

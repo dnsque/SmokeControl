@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login } from '../auth'; // Import the login function
+import { login } from '../firebase/auth'; // Import the login function
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
