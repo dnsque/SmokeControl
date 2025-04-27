@@ -11,7 +11,7 @@ const GoogleLoginForm = () => {
       } else {
         console.error("Google sign-in error:", error);
       }
-      alert("Nepavyko prisijungti su Google"); // Lithuanian message for error
+      alert("Nepavyko prisijungti su Google");
     }
   };
 

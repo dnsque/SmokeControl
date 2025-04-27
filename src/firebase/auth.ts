@@ -1,5 +1,5 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "./index"; // импортируем из index.ts
+import { auth } from "./index";
 
 type SuccessCallback = (path: string) => void;
 
@@ -14,7 +14,6 @@ export const login = async (email: string, password: string, onSuccess: SuccessC
   }
 };
 
-// Можно добавить функции для регистрации и выхода
 export const register = async (email: string, password: string, onSuccess: SuccessCallback) => {
   try {
     await createUserWithEmailAndPassword(auth, email, password);

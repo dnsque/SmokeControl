@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { login } from '../firebase/auth'; // Import the login function
+import { login } from '../firebase/auth';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');  // New state to hold the error message
+  const [error, setError] = useState<string>('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');  // Reset error before making a new request
+    setError(''); 
     try {
-      await login(email, password, (path: string) => { window.location.href = path; }); // Call login function
+      await login(email, password, (path: string) => { window.location.href = path; });
     } catch (err: any) {
-      setError('Įvyko klaida prisijungiant: ' + err.message); // Set error message to display
+      setError('Įvyko klaida prisijungiant: ' + err.message);
     }
   };
 

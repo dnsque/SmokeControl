@@ -3,6 +3,7 @@ import { db, auth } from '../firebase/index';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import SavingsProductSuggestions from './SavingsProductSuggestions';
+import UserDataForm from '../forms/UserDataForm';
 
 const DisplayUserData = () => {
   const [userData, setUserData] = useState<any | null>(null);
@@ -10,55 +11,36 @@ const DisplayUserData = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("DisplayUserData: Компонент инициализирован");
-    
-    // Listen for authentication state changes
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      console.log("DisplayUserData: Статус аутентификации изменился:", user ? `пользователь ${user.uid}` : "не авторизован");
-      
       if (user) {
-        // Reference the current user's document
         const userDocRef = doc(db, "userData", user.uid);
-        console.log("DisplayUserData: Создана ссылка на документ:", user.uid);
         
-        // Set up a real-time listener on the document
         const unsubscribeSnapshot = onSnapshot(
           userDocRef,
           (docSnap) => {
-            console.log("DisplayUserData: Получен снэпшот, данные существуют:", docSnap.exists());
-            
             if (docSnap.exists()) {
               const data = docSnap.data();
-              console.log("DisplayUserData: Данные документа:", data);
               setUserData(data);
             } else {
-              console.log("Нет данных для этого пользователя");
               setUserData(null);
             }
             setLoading(false);
           },
           (error) => {
-            console.error("DisplayUserData: Ошибка при получении данных:", error);
-            setError(`Ошибка при получении данных: ${error.message}`);
+            setError(`Klaida gaunant duomenis: ${error.message}`);
             setLoading(false);
           }
         );
 
-        // Cleanup the onSnapshot listener when the component unmounts or user changes
         return () => {
-          console.log("DisplayUserData: Отписка от слушателя документа");
           unsubscribeSnapshot();
         };
       } else {
-        // If no user is logged in, stop loading
-        console.log("DisplayUserData: Нет авторизованного пользователя, останавливаем загрузку");
         setLoading(false);
       }
     });
 
-    // Cleanup the auth listener on unmount
     return () => {
-      console.log("DisplayUserData: Отписка от слушателя аутентификации");
       unsubscribeAuth();
     };
   }, []);
@@ -83,7 +65,26 @@ const DisplayUserData = () => {
   }
 
   if (!userData) {
-    return <p className="text-center">Nėra duomenų</p>;
+    return (
+      <div className='justify-center items-center m-2 col'>
+        <div className='m-2'><p className="text-center">Nėra duomenų</p></div>
+        <div><label htmlFor="my-modal" className="btn">Redaguoti duomenys</label></div>
+        <input type="checkbox" id="my-modal" className="modal-toggle" />
+        
+        <div className="modal">
+          <div className="modal-box w-96">
+            <div className="modal-action mt-0">
+              <label htmlFor="my-modal" className="btn btn-square">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </label>
+            </div>
+            <UserDataForm />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const savings = userData.savings ? parseFloat(userData.savings) : 0;
@@ -92,7 +93,7 @@ const DisplayUserData = () => {
     <div className="flex flex-col items-center w-full">
       <div className="card m-2 bg-base-300 shadow-xl w-full max-w-md">
         <div className="card-body">
-          <h2 className="card-title text-center justify-center">Sveiki, {userData.displayName || "Anonimai"}!</h2>
+          <h2 className="card-title text-center justify-center">Sveiki, {userData.username || "Anonimai"}!</h2>
           <div className="divider"></div>
           <div className="grid grid-cols-2 gap-2">
             <p className="text-right font-semibold">Pakuotės kaina:</p>
@@ -104,15 +105,34 @@ const DisplayUserData = () => {
             <p className="text-right font-semibold">Cigarečių per dieną:</p>
             <p>{userData.frequency}</p>
             
+            <p className="text-right font-semibold">Raktiniai žodžiai:</p>
+            <p>{userData.keywords?.join(', ')}</p>
+            
             <p className="text-right font-semibold">Sutaupyta:</p>
             <p className="font-bold text-success">{savings.toFixed(2)}€</p>
+                        
           </div>
         </div>
       </div>
-      
-      {/* Show product suggestions based on savings */}
+      <div className='flex justify-center items-center m-2'> 
+        <label htmlFor="my-modal" className="btn">Redaguoti duomenys</label>
+        <input type="checkbox" id="my-modal" className="modal-toggle" />
+        
+        <div className="modal">
+          <div className="modal-box w-96">
+            <div className="modal-action mt-0">
+              <label htmlFor="my-modal" className="btn btn-square">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </label>
+            </div>
+            <UserDataForm />
+          </div>
+        </div>
+      </div>
       <div className="w-full max-w-4xl mt-6">
-        <SavingsProductSuggestions savings={savings} />
+        <SavingsProductSuggestions savings={savings} keywords={userData.keywords} />
       </div>
     </div>
   );

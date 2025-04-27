@@ -3,9 +3,10 @@ import { fetchProductsBySavings } from '../services/aliexpressApi';
 
 interface SavingsProductSuggestionsProps {
   savings: number;
+  keywords: string[];
 }
 
-const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ savings }) => {
+const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ savings, keywords }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,8 +15,13 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
     const loadProducts = async () => {
       try {
         setLoading(true);
-        const data = await fetchProductsBySavings(savings);
-        setProducts(data);
+        const data = await fetchProductsBySavings(savings, keywords);
+    
+        // Сортировка по убыванию цены
+        const sortedData = data.sort((a, b) => b.price - a.price);
+    
+        console.log('Fetched and sorted products:', sortedData);
+        setProducts(sortedData);
       } catch (err) {
         console.error('Error fetching products:', err);
         setError('Nepavyko gauti prekių pasiūlymų');
@@ -23,6 +29,7 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
         setLoading(false);
       }
     };
+    
 
     if (savings > 0) {
       loadProducts();
@@ -30,7 +37,7 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
       setProducts([]);
       setLoading(false);
     }
-  }, [savings]);
+  }, [savings, keywords]); // Добавляем keywords в зависимость useEffect
 
   if (loading) {
     return (
@@ -68,10 +75,10 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {products.map((product) => (
-          <div key={product.id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+          <div key={product.id} className="card bg-base-300 shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <figure className="relative">
               <img 
-                src={product.imageUrl} 
+                src={product.image} 
                 alt={product.title} 
                 className="h-48 w-full object-cover"
                 onError={(e) => {
@@ -97,10 +104,6 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
                   </div>
                 )}
               </div>
-              
-              {product.orders && (
-                <p className="text-xs text-gray-500 mt-1">Užsakymų: {product.orders.toLocaleString()}</p>
-              )}
               
               <div className="card-actions justify-end mt-2">
                 <a 
@@ -129,4 +132,4 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
   );
 };
 
-export default SavingsProductSuggestions; 
+export default SavingsProductSuggestions;

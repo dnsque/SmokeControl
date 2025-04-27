@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { db, auth } from '../firebase/index';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 interface UserData {
   id: string;
-  displayName?: string;
+  username: string;
   email?: string;
   savings: number;
   quitTime: string;
@@ -22,31 +22,23 @@ const UserRatingsPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    // Проверка авторизации пользователя
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
     });
 
-    // Получение данных рейтинга
     const fetchUsersData = async () => {
       try {
-        // Create a query to get users sorted by savings (highest first)
         const usersQuery = query(
           collection(db, "userData"),
           orderBy("savings", "desc"),
-          limit(20) // Limit to top 20 users for performance
+          limit(100)
         );
 
         const querySnapshot = await getDocs(usersQuery);
-        const userData: UserData[] = [];
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data() as Omit<UserData, 'id'>;
-          userData.push({
-            id: doc.id,
-            ...data,
-          });
-        });
+        const userData: UserData[] = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data() as Omit<UserData, 'id'>,
+        }));
 
         setUsersData(userData);
       } catch (err) {
@@ -59,18 +51,16 @@ const UserRatingsPage: React.FC = () => {
 
     fetchUsersData();
 
-    // Отписка от слушателя при размонтировании
     return () => unsubscribeAuth();
   }, []);
 
-  // Calculate days since quit date
-  const calculateDaysSinceQuit = (quitDateStr: string) => {
+  // Мемоизация для вычисления дней с момента отказа
+  const calculateDaysSinceQuit = useMemo(() => (quitDateStr: string) => {
     const quitDate = new Date(quitDateStr);
     const currentDate = new Date();
     const diffTime = currentDate.getTime() - quitDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 0;
-  };
+    return Math.max(Math.floor(diffTime / (1000 * 60 * 60 * 24)), 0);
+  }, []);
 
   if (loading) {
     return (
@@ -112,7 +102,6 @@ const UserRatingsPage: React.FC = () => {
         <p className="text-center text-lg">Nerasta vartotojų duomenų</p>
       ) : (
         <div className="relative">
-          {/* Таблица всегда загружается и отображается */}
           <div className="overflow-x-auto">
             <table className={`table w-full ${!isLoggedIn ? 'blur-sm' : ''}`}>
               <thead>
@@ -133,9 +122,7 @@ const UserRatingsPage: React.FC = () => {
                       {index === 2 && "🥉"}
                       {index > 2 && (index + 1)}
                     </td>
-                    <td>
-                      {user.displayName || "Anonimas"}
-                    </td>
+                    <td>{user.username || "Anonimas"}</td>
                     <td className="text-center">
                       {calculateDaysSinceQuit(user.quitTime)}
                     </td>
@@ -151,7 +138,6 @@ const UserRatingsPage: React.FC = () => {
             </table>
           </div>
 
-          {/* Сообщение о необходимости авторизации поверх размытых данных */}
           {!isLoggedIn && (
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
               <div className="bg-base-300 p-6 rounded-lg shadow-lg max-w-md text-center">
@@ -175,4 +161,4 @@ const UserRatingsPage: React.FC = () => {
   );
 };
 
-export default UserRatingsPage; 
+export default UserRatingsPage;

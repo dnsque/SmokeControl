@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 interface UserData {
   id: string;
-  displayName?: string;
+  username?: string;
   email?: string;
   savings: number;
   quitTime: string;
@@ -19,36 +19,27 @@ const TopUsersRanking: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Calculate days since quit date
-  const calculateDaysSinceQuit = (quitDateStr: string) => {
+  const calculateDaysSinceQuit = (quitDateStr: string): number => {
     const quitDate = new Date(quitDateStr);
     const currentDate = new Date();
     const diffTime = currentDate.getTime() - quitDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 0;
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   };
 
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
-        console.log("Начинаем запрос к Firestore...");
-        console.log("Используем коллекцию:", "userData");
-        console.log("Firestore instance:", db);
-        
-        // Create a query to get top 15 users sorted by savings
+        // Create a query to get top 5 users sorted by savings
         const usersQuery = query(
           collection(db, "userData"),
           orderBy("savings", "desc"),
-          limit(15)
+          limit(5)
         );
 
-        console.log("Запрос создан, получаем документы...");
         const querySnapshot = await getDocs(usersQuery);
-        console.log("Документы получены. Количество документов:", querySnapshot.size);
-        
         const userData: UserData[] = [];
 
         querySnapshot.forEach((doc) => {
-          console.log("Документ:", doc.id, "=>", doc.data());
           const data = doc.data() as Omit<UserData, 'id'>;
           userData.push({
             id: doc.id,
@@ -56,10 +47,8 @@ const TopUsersRanking: React.FC = () => {
           });
         });
 
-        console.log("Данные обработаны, всего записей:", userData.length);
         setUsersData(userData);
       } catch (err) {
-        console.error("Error fetching user data:", err);
         if (err instanceof Error) {
           setError(`Nepavyko gauti vartotojų duomenų: ${err.message}`);
         } else {
@@ -98,7 +87,7 @@ const TopUsersRanking: React.FC = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold mb-4 text-center">Geriausi 15 vartotojų</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Geriausi 5 vartotojai pagal sutaupytus pinigus</h2>
       <div className="overflow-x-auto">
         <table className="table table-sm w-full">
           <thead>
@@ -119,7 +108,7 @@ const TopUsersRanking: React.FC = () => {
                   {index > 2 && (index + 1)}
                 </td>
                 <td>
-                  {user.displayName || "Anonimas"}
+                  {user.username || "Anonimas"}
                 </td>
                 <td className="text-center">
                   {calculateDaysSinceQuit(user.quitTime)}
@@ -141,4 +130,4 @@ const TopUsersRanking: React.FC = () => {
   );
 };
 
-export default TopUsersRanking; 
+export default TopUsersRanking;

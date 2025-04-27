@@ -8,7 +8,9 @@ const UserForm: React.FC = () => {
   const [price, setPrice] = useState<number>(0);
   const [quitTime, setQuitTime] = useState<string>("");
   const [frequency, setFrequency] = useState<number>(0);
+  const [keywords, setKeywords] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -23,6 +25,8 @@ const UserForm: React.FC = () => {
           setPrice(data.price || 0);
           setQuitTime(data.quitTime || "");
           setFrequency(data.frequency || 0);
+          setKeywords((data.keywords || []).join(", "));
+          setUsername(data.username || "");
         }
         setLoading(false);
       }
@@ -35,12 +39,18 @@ const UserForm: React.FC = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      await saveOrUpdateData(price, quitTime, frequency);
+      const keywordsArray = keywords
+        .split(",")
+        .map((kw) => kw.trim())
+        .filter((kw) => kw);
+
+      await saveOrUpdateData(price, quitTime, frequency, keywordsArray, username);
+
       setMessage("Duomenys sėkmingai išsaugoti!");
-      setTimeout(() => setMessage(""), 3000); // Clear message after 3 seconds
+      setTimeout(() => setMessage(""), 3000);
     } catch (error) {
       setMessage("Klaida išsaugant duomenis.");
-      setTimeout(() => setMessage(""), 3000); // Clear error message after 3 seconds
+      setTimeout(() => setMessage(""), 3000);
     } finally {
       setLoading(false);
     }
@@ -49,10 +59,20 @@ const UserForm: React.FC = () => {
   return (
     <div className="mx-auto">
       <h2 className="text-2xl font-bold text-center m-4">Duomenų forma</h2>
-      {loading && <p className="text-center">Kraunasi...</p>} {/* Loading indicator */}
+      {loading && <p className="text-center">Kraunasi...</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+          <label className="block text-sm font-medium">Tavo vardas</label>
+          <input
+            type="text"
+            placeholder="Anonimas"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="mt-1 input input-bordered w-full"
+          />
+        </div>
         <div>
-          <label className="block text-sm font-medium">Pakuotės kaina: </label>
+          <label className="block text-sm font-medium">Pakuotės kaina</label>
           <input
             type="number"
             value={price}
@@ -80,11 +100,22 @@ const UserForm: React.FC = () => {
             className="mt-1 input input-bordered w-full"
           />
         </div>
+        <div>
+          <label className="block text-sm font-medium">Raktiniai žodžiai (atskirkite kableliais)</label>
+          <input
+            type="text"
+            value={keywords}
+            onChange={(e) => setKeywords(e.target.value)}
+            placeholder="pvz. iphone, laikrodis, ausinės"
+            className="mt-1 input input-bordered w-full"
+          />
+        </div>
+
 
         <button
           type="submit"
           className="w-full btn btn-primary"
-          disabled={loading} // Disable button during loading
+          disabled={loading}
         >
           Išsaugoti duomenis
         </button>
