@@ -1,49 +1,58 @@
-# SmokeControl
 
-Приложение для контроля и мотивации бросить курить.
+# SmokeControl  
+**App for smoking control and quit motivation**  
+**Programa rūkymo kontrolei ir metimo motyvacijai**
 
-## Структура проекта
+## Project Structure / Projekto struktūra
 
 ```
 src/
-  ├── assets/         # Статические ресурсы (изображения, шрифты)
-  ├── components/     # Повторно используемые компоненты UI
-  │    ├── Header.tsx        # Компонент заголовка
-  │    ├── Footer.tsx        # Компонент подвала
-  │    ├── TitleUpdater.tsx  # Компонент для обновления заголовка страницы
+  ├── assets/         # Static assets (images, fonts)
+                      # Statiniai ištekliai (paveikslėliai, šriftai)
+  ├── components/     # Reusable UI components
+                      # Daugkartinio naudojimo UI komponentai
+  │    ├── Header.tsx        # Header component / Antraštės komponentas
+  │    ├── Footer.tsx        # Footer component / Poraštės komponentas
+  │    ├── TitleUpdater.tsx  # Page title updater / Puslapio antraštės keitimas
   │    └── ...
-  ├── pages/          # Компоненты страниц (соответствуют маршрутам)
-  │    ├── HomePage.tsx      # Главная страница
-  │    ├── LoginPage.tsx     # Страница входа
-  │    ├── AccountPage.tsx   # Страница аккаунта
+  ├── pages/          # Page components (match routes)
+                      # Puslapių komponentai (atitinka maršrutus)
+  │    ├── HomePage.tsx      # Home page / Pagrindinis puslapis
+  │    ├── LoginPage.tsx     # Login page / Prisijungimo puslapis
+  │    ├── AccountPage.tsx   # Account page / Paskyros puslapis
   │    └── ...
-  ├── firebase/       # Конфигурация и сервисы Firebase
-  │    ├── index.ts          # Инициализация Firebase
-  │    ├── auth.ts           # Сервисы аутентификации
-  │    └── firebaseData.ts   # Сервисы для работы с данными Firestore
-  ├── services/       # Другие сервисы API
-  ├── hooks/          # Пользовательские хуки React
-  ├── forms/          # Компоненты форм
-  ├── data/           # Статические данные или модели
-  ├── App.tsx         # Корневой компонент приложения
-  └── main.tsx        # Точка входа
+  ├── firebase/       # Firebase config and services
+                      # Firebase konfigūracija ir paslaugos
+  │    ├── index.ts          # Firebase initialization / Inicializavimas
+  │    ├── auth.ts           # Auth services / Autentifikacijos paslaugos
+  │    └── firebaseData.ts   # Firestore data helpers / Duomenų paslaugos
+  ├── services/       # Other API services / Kitos API paslaugos
+  ├── hooks/          # Custom React hooks / Nestandartiniai React hook'ai
+  ├── forms/          # Form components / Formų komponentai
+  ├── data/           # Static data or models / Statiniai duomenys arba modeliai
+  ├── App.tsx         # Root app component / Pagrindinis aplikacijos komponentas
+  └── main.tsx        # Entry point / Pradinis įėjimo taškas
 ```
 
-## Настройка окружения
+## Environment Setup / Aplinkos nustatymai
 
-1. Создайте файл `.env` на основе `.env.example`
-2. Заполните необходимые переменные окружения для Firebase с префиксом `VITE_`
-   (в Vite все переменные окружения должны начинаться с `VITE_`)
+1. Create a `.env` file based on `.env.example`  
+   Sukurkite `.env` failą pagal `.env.example`
 
-## Запуск проекта
+2. Fill in required Firebase variables (prefix with `VITE_`)  
+   Užpildykite Firebase aplinkos kintamuosius (su priešdėliu `VITE_`)  
+   *(Note: Vite requires env variables to start with `VITE_`)*  
+   *(Pastaba: Vite reikalauja, kad kintamieji prasidėtų `VITE_`)*
+
+## Running the Project / Projekto paleidimas
 
 ```bash
-# Установка зависимостей
+# Install dependencies / Įdiekite priklausomybes
 npm install
 
-# Запуск режима разработки
+# Run in development mode / Paleiskite kūrimo režimu
 npm run dev
 
-# Сборка для продакшн
+# Build for production / Sukurkite produkcinę versiją
 npm run build
 ```
