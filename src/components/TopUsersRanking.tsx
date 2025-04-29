@@ -18,7 +18,6 @@ const TopUsersRanking: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Calculate days since quit date
   const calculateDaysSinceQuit = (quitDateStr: string): number => {
     const quitDate = new Date(quitDateStr);
     const currentDate = new Date();
@@ -29,7 +28,7 @@ const TopUsersRanking: React.FC = () => {
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
-        // Create a query to get top 5 users sorted by savings
+
         const usersQuery = query(
           collection(db, "userData"),
           orderBy("savings", "desc"),

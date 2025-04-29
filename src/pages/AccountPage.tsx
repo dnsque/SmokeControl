@@ -33,7 +33,7 @@ const AccountPage: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center h-64 space-y-6">
                 <Helmet>
-                    <title>SmokeControl - Prisijungimas reikalingas</title>
+                    <title>SmokeControl - Reikalingas prisijungimas</title>
                 </Helmet>
                 <h1 className="text-3xl font-bold text-center">Kad matytumėte savo duomenis, prisijunkite</h1>
                 <Link to="/login" className="btn btn-primary btn-lg">
@@ -45,12 +45,13 @@ const AccountPage: React.FC = () => {
 
     // User is logged in - show account page
     return (
-        <div>
+        <div className='min-h-screen p-4'>
             <Helmet>
                 <title>SmokeControl - Jūsų paskyra</title>
                 <meta name="description" content="Jūsų asmeniniai duomenys ir statistika" />
             </Helmet>
-            <h1 className='text-2xl font-bold'>Jūsų duomenys:</h1>
+            <div><h1 className='text-2xl font-bold'>Jūsų duomenys:</h1>
+                </div>
             <DisplayUserData />
 
             

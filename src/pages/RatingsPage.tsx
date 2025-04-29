@@ -54,13 +54,12 @@ const UserRatingsPage: React.FC = () => {
     return () => unsubscribeAuth();
   }, []);
 
-  // Мемоизация для вычисления дней с момента отказа
-  const calculateDaysSinceQuit = useMemo(() => (quitDateStr: string) => {
-    const quitDate = new Date(quitDateStr);
-    const currentDate = new Date();
-    const diffTime = currentDate.getTime() - quitDate.getTime();
-    return Math.max(Math.floor(diffTime / (1000 * 60 * 60 * 24)), 0);
-  }, []);
+    const calculateDaysSinceQuit = useMemo(() => (quitDateStr: string) => {
+      const quitDate = new Date(quitDateStr);
+      const currentDate = new Date();
+      const diffTime = currentDate.getTime() - quitDate.getTime();
+      return Math.max(Math.floor(diffTime / (1000 * 60 * 60 * 24)), 0);
+    }, []);
 
   if (loading) {
     return (
@@ -140,7 +139,7 @@ const UserRatingsPage: React.FC = () => {
 
           {!isLoggedIn && (
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <div className="bg-base-300 p-6 rounded-lg shadow-lg max-w-md text-center">
+              <div className="bg-base-300 p-4 m-6 rounded-lg shadow-lg max-w-md text-center">
                 <h3 className="text-xl font-bold mb-4">Norėdami peržiūrėti reitingą, prašome prisijungti</h3>
                 <p className="mb-6">Prisijungę galėsite matyti vartotojų reitingą be apribojimų.</p>
                 <Link to="/login" className="btn btn-primary">Prisijungti</Link>

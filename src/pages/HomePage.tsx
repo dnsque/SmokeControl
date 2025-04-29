@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { auth } from '../firebase/index';
 import { onAuthStateChanged } from 'firebase/auth';
 import TopUsersRanking from '../components/TopUsersRanking';
-
+import HomeArticles from '../components/HomeArticles';
+import cigarette from '../assets/cigarette.png'
 const HomePage: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     
@@ -16,24 +17,26 @@ const HomePage: React.FC = () => {
     }, []);
 
     return (
-        <div className="container mx-auto p-4 text-center">
+        <div className="container mx-auto p-4 text-center min-h-screen">
             <main className="flex flex-col items-center">
-                <section className="mb-12 mt-16">
+                <section className="mb-12 items-center">
+                <section className="mb-8 max-w-2xl justify-center">
+                    <HomeArticles />
+                </section>
                     <h1 className="text-4xl font-bold mb-6">SmokeControl</h1>
                     <p className="text-xl mb-8 max-w-2xl mx-auto">Programa, padedanti kontroliuoti ir motyvuoti mesti rūkyti</p>
-                    
-                    <div className="flex flex-col gap-6 sm:flex-row sm:gap-4 justify-center">
-                        {!isLoggedIn && (
-                            <div className="flex gap-4 justify-center">
-                                <Link to="/login" className="btn btn-outline btn-lg">
-                                    Prisijungti
-                                </Link>
-                                <Link to="/register" className="btn btn-secondary btn-lg">
-                                    Registruotis
-                                </Link>
-                            </div>
-                        )}
-                    </div>
+                    <img className="w-full max-w-2xl mx-auto mb-8 rounded-lg" src={cigarette} alt="Logo" />
+                {!isLoggedIn && (
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <Link to="/login" className="btn btn-outline btn-lg">
+                    Prisijungti
+                    </Link>
+                    <Link to="/register" className="btn btn-secondary btn-lg">
+                    Registruotis
+                    </Link>
+                </div>
+                )}
+
                 </section>
                 
                 <section className="mb-8 max-w-2xl">

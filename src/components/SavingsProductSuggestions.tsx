@@ -16,20 +16,14 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
       try {
         setLoading(true);
         const data = await fetchProductsBySavings(savings, keywords);
-    
-        // Сортировка по убыванию цены
         const sortedData = data.sort((a, b) => b.price - a.price);
-    
-        console.log('Fetched and sorted products:', sortedData);
         setProducts(sortedData);
       } catch (err) {
-        console.error('Error fetching products:', err);
         setError('Nepavyko gauti prekių pasiūlymų');
       } finally {
         setLoading(false);
       }
     };
-    
 
     if (savings > 0) {
       loadProducts();
@@ -37,7 +31,7 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
       setProducts([]);
       setLoading(false);
     }
-  }, [savings, keywords]); // Добавляем keywords в зависимость useEffect
+  }, [savings, keywords]);
 
   if (loading) {
     return (
@@ -60,7 +54,7 @@ const SavingsProductSuggestions: React.FC<SavingsProductSuggestionsProps> = ({ s
 
   if (products.length === 0) {
     if (savings <= 0) {
-      return null; // Don't show anything if there are no savings yet
+      return null; 
     }
     return (
       <div className="mt-4">
